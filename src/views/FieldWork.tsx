@@ -1,11 +1,20 @@
+import { useState, useEffect } from 'react';
 import { IconList } from '../components/Icons';
+import { api } from '../services/api';
 
 export default function FieldWork() {
-  const records = [
-    { date: '2023-11-20', task: 'Poda verde', area: 'Cuartel Norte', status: 'Completado' },
-    { date: '2023-11-21', task: 'Aplicación Foliar', area: 'Cuartel Sur', status: 'En Progreso' },
-    { date: '2023-11-22', task: 'Desmalezado', area: 'Cuartel Oeste', status: 'Pendiente' },
-  ];
+  const [records, setRecords] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRecords = async () => {
+      setLoading(true);
+      const res = await api.getFieldRecords();
+      setRecords(res);
+      setLoading(false);
+    };
+    fetchRecords();
+  }, []);
 
   return (
     <div className="max-w-6xl mx-auto py-8">
@@ -33,7 +42,19 @@ export default function FieldWork() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {records.map((r, i) => (
+            {loading ? (
+              <tr>
+                <td colSpan={4} className="py-8 text-center text-slate-500 font-medium">
+                  Cargando labores de campo...
+                </td>
+              </tr>
+            ) : records.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="py-8 text-center text-slate-500 font-medium">
+                  No hay labores registradas.
+                </td>
+              </tr>
+            ) : records.map((r, i) => (
               <tr key={i} className="hover:bg-brand-light-green/30 transition-colors">
                 <td className="py-4 px-6 text-slate-700">{r.date}</td>
                 <td className="py-4 px-6 font-medium text-brand-blue">{r.task}</td>

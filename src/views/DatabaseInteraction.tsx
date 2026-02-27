@@ -1,12 +1,20 @@
+import { useState, useEffect } from 'react';
 import { IconDatabase } from '../components/Icons';
+import { api } from '../services/api';
 
 export default function DatabaseInteraction() {
-  const data = [
-    { id: 101, table: 'Monitoreos', field: 'Cuartel Norte', date: '2023-11-20', value: 'Pulgón Nivel 3' },
-    { id: 102, table: 'Lluvias', field: 'Est. Central', date: '2023-11-22', value: '15.2 mm' },
-    { id: 103, table: 'Aplicaciones', field: 'Cuartel Sur', date: '2023-11-23', value: 'Fertilizante NPK' },
-    { id: 104, table: 'Monitoreos', field: 'Cuartel Este', date: '2023-11-23', value: 'Arañita Roja Nivel 1' },
-  ];
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const res = await api.getLogs();
+      setData(res);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto py-8">
@@ -44,7 +52,19 @@ export default function DatabaseInteraction() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {data.map((row) => (
+              {loading ? (
+                <tr>
+                   <td colSpan={6} className="py-8 text-center text-slate-500 font-medium">
+                     Cargando registros desde la base de datos...
+                   </td>
+                </tr>
+              ) : data.length === 0 ? (
+                <tr>
+                   <td colSpan={6} className="py-8 text-center text-slate-500 font-medium">
+                     No hay registros disponibles.
+                   </td>
+                </tr>
+              ) : data.map((row) => (
                 <tr key={row.id} className="hover:bg-brand-light-green/30 transition-colors">
                   <td className="py-4 px-6 text-slate-500 text-xs font-mono">#{row.id}</td>
                   <td className="py-4 px-6">
