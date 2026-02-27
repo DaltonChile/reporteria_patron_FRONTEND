@@ -1,4 +1,3 @@
-import React from 'react';
 import { IconUpload } from '../components/Icons';
 
 export default function UploadExcel() {

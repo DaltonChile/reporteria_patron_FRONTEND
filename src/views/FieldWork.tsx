@@ -1,4 +1,3 @@
-import React from 'react';
 import { IconList } from '../components/Icons';
 
 export default function FieldWork() {
